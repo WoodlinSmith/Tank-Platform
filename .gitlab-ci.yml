@@ -1,0 +1,49 @@
+variables:
+   PROJECT_NAME: "Slackers Platform Fall 2018"
+
+before_script:
+   - echo "Starting build for $PROJECT_NAME"
+
+stages:
+   - build
+   - test
+   - test_FT
+   - coverage
+
+build:
+   stage: build
+   tags:
+      - ubuntu16.04
+   script:
+      - g++ --version
+
+test:
+   stage: test
+   tags:
+      - ubuntu16.04
+   script:
+      - cd tests/src
+      - echo "Running tests"
+      - make -j3
+      - ./testUnitAll -d yes
+
+
+test_FT:
+   stage: test_FT
+   tags:
+      - ubuntu16.04
+   script:
+      - cd tests/functional_tests/
+      - g++ -I../src/ --std=c++11 -c main.cpp 
+      - make -j3
+      - ./testFunctionalAll -d yes
+
+coverage:
+   stage: coverage
+   tags:
+      - ubuntu16.04
+   script:
+      - ./runCoverage.sh
+   artifacts:
+      paths:
+        - coverage/
